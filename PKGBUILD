@@ -11,9 +11,11 @@ license=('AGPL3')
 depends=('nss' 'libxtst' 'alsa-lib' 'libxss' 'gtk3' 'gconf' 'freetype2')
 options=('!strip')
 
+source=("$pkgname-$pkgver.patch")
 source_i686=("https://github.com/bromagosa/${pkgname}/releases/download/${pkgver}/${pkgname}_desktop-gnu-32_${pkgver}.tar.gz")
 source_x86_64=("https://github.com/bromagosa/${pkgname}/releases/download/${pkgver}/${pkgname}_desktop-gnu-64_${pkgver}.tar.gz")
 
+sha256sums=('f7695f222543f4d9417d8871a206804a6bb27f93e5ae3ece1147778f9599f437')
 sha256sums_i686=('72bdf9138e26d29ba2c965eecd017c7235904414352e235323fa24374419d4b2')
 sha256sums_x86_64=('312fd6a8aabfbe8d44a3f2795a0f93c2ed3da481b688150f3f54b78fdd9ecc3a')
 
@@ -25,10 +27,7 @@ fi
 
 prepare() {
     cd "${pkgname}_desktop-gnu-${_arch}_${pkgver}"
-    
-    sed -i "s|Icon=|Icon=/opt/${pkgname}/icons/128x128x32.png|g" ${pkgname}.desktop
-    sed -i "s|'cd \$(dirname %k)|\"cd /opt/${pkgname}/|g" ${pkgname}.desktop
-    sed -i "s|launcher.sh'|run\"|g" ${pkgname}.desktop
+    patch -p1 -i "$srcdir/$pkgname-$pkgver.patch"
 }
 
 package() {
