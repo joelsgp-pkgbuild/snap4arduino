@@ -1,6 +1,7 @@
 # Maintainer: jmcb <joelsgp@protonmail.com>
 # Contributor: ValHue <vhuelamo at gmail dot com>
 
+# todo change this to -bin, or change the pkgbuild to actually build it
 pkgname='Snap4Arduino'
 pkgver='6.2'
 pkgrel=2
@@ -33,23 +34,23 @@ prepare() {
 package() {
     cd "${pkgname}_desktop-gnu-${_arch}_${pkgver}"
 
-    # Data
-    install -d ${pkgdir}/opt/${pkgname}/{icons,lib,locales,pnacl,swiftshader}
-    install -d ${pkgdir}/usr/share/{applications,licenses}
-    install -m 644 icons/* "${pkgdir}/opt/${pkgname}/icons/"
-    install -m 755 lib/* "${pkgdir}/opt/${pkgname}/lib/"
-    install -m 644 locales/* "${pkgdir}/opt/${pkgname}/locales/"
-    install -m 644 pnacl/* "${pkgdir}/opt/${pkgname}/pnacl/"
-    install -m 644 swiftshader/* "${pkgdir}/opt/${pkgname}/swiftshader/"
-    rm -rf ./{icons,lib,locales,pnacl,swiftshader}
-    chmod +x ${pkgdir}/opt/${pkgname}/pnacl/*_nexe
+    _opt="${pkgdir}/opt/${pkgname}"
+
+    # Data directories
+    echo "${_opt}/icons/"
+    install -D -m 644 -t "${_opt}/icons/" icons/*
+    install -D -m 755 -t "${_opt}/lib/" lib/*
+    install -D -m 644 -t "${_opt}/locales/" locales/*
+    install -D -m 644 -t "${_opt}/pnacl/" pnacl/*
+    install -D -m 755 -t "${_opt}/swiftshader/" swiftshader/* 
 
     # Desktop file
-    install -D -m 644 ${pkgname}.desktop "${pkgdir}/usr/share/applications/${pkgname}.desktop"
+    install -D -m 644 -t "${pkgdir}/usr/share/applications/" "${pkgname}.desktop"
 
     # Rest of data
-    install -m 644 ./* "${pkgdir}/opt/${pkgname}/"
+    find . -type 'f' -exec install -D -m 644 -t "${_opt}/" '{}' ';'
 
     # Fix for permissions
-    chmod +x ${pkgdir}/opt/${pkgname}/{chromedriver,launcher*,minidump_stackwalk,nacl_*,nwjc,payload,run}
+    chmod +x ${_opt}/pnacl/*_nexe
+    chmod +x ${_opt}/{chromedriver,launcher*,minidump_stackwalk,nacl_*,nwjc,payload,run}
 }
